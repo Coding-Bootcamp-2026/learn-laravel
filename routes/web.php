@@ -45,4 +45,6 @@ Route::fallback(function () {
     return view('greeting');
 });
 
-Route::get('/blogs', [BlogController::class, 'index']);
+Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
+Route::get('/blogs/create', [BlogController::class, 'create'])->name('blogs.create');
+Route::post('/blogs/store', [BlogController::class, 'store'])->name('blogs.store');
