@@ -15,7 +15,7 @@
 <body>
     <div class="container mx-auto px-4 py-6">
         <div class="flex justify-between w-full">
-            <h1 class="text-6xl font-bold mb-4">Daftar Blog</h1>
+            <h1 class="text-6xl font-bold mb-4">Daftar Blog Ku</h1>
             <div class="flex space-x-3 items-center">
                 <form method="GET" class="w-lg">
                     <label for="default-search"
@@ -42,7 +42,10 @@
             </div>
         </div>
 
-
+        @if (session('success'))
+            <div class="mb-4 px-4 py-2 bg-green-100 border border-green-400 text-green-800 rounded">
+                {{ session('success') }}</div>
+        @endif
 
         <div class="overflow-x-auto rounded-lg shadow mb-5">
             <table class="min-w-full text-sm text-left text-gray-700">
@@ -51,7 +54,7 @@
                         <th scope="col" class="px-6 py-4 font-medium text-gray-900">No</th>
                         <th scope="col" class="px-6 py-4 font-medium text-gray-900">Title</th>
                         <th scope="col" class="px-6 py-4 font-medium text-gray-900">Status</th>
-                        <th scope="col" class="w-1/8 text-center font-medium text-gray-900">Action</th>
+                        <th scope="col" class="w-1/4 text-center font-medium text-gray-900">Action</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -79,10 +82,16 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-sm text-center space-x-2">
-                                <a href="#"
+                                <a href="{{ route('blogs.show', $blog->id) }}"
+                                    class="inline-block px-3 py-1 text-green-600 border border-green-600 rounded hover:bg-green-600 hover:text-white">View</a>
+                                <a href="{{ route('blogs.edit', $blog->id) }}"
                                     class="inline-block px-3 py-1 text-blue-600 border border-blue-600 rounded hover:bg-blue-600 hover:text-white transition">Edit</a>
-                                <button onclick="confirm('Are you sure?')"
-                                    class="inline-block px-3 py-1 text-red-600 border border-red-600 rounded hover:bg-red-600 hover:text-white transition">Delete</button>
+                                <form action="{{ route('blogs.destroy', $blog->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button onclick="confirm('Are you sure?')"
+                                        class="inline-block px-3 py-1 text-red-600 border border-red-600 rounded hover:bg-red-600 hover:text-white transition">Delete</button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach

@@ -48,3 +48,7 @@ Route::fallback(function () {
 Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
 Route::get('/blogs/create', [BlogController::class, 'create'])->name('blogs.create');
 Route::post('/blogs/store', [BlogController::class, 'store'])->name('blogs.store');
+Route::get('/blogs/{id}/detail', [BlogController::class, 'show'])->name('blogs.show');
+Route::get('/blogs/{id}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
+Route::put('/blogs/{id}/update', [BlogController::class, 'update'])->name('blogs.update');
+Route::delete('/blogs/{id}/delete', [BlogController::class, 'destroy'])->name('blogs.destroy');
