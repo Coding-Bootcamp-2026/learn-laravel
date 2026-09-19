@@ -54,5 +54,5 @@ Route::put('/blogs/{id}/update', [BlogController::class, 'update'])->name('blogs
 Route::delete('/blogs/{id}/delete', [BlogController::class, 'destroy'])->name('blogs.destroy');
 
 Route::get('/about-us', function() {
-    return view('about-us');
+    return view('blogs/about-us');
 });

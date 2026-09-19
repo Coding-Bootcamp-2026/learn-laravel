@@ -15,7 +15,7 @@
 <body>
     <div class="container mx-auto px-4 py-6">
         <div class="flex justify-between w-full">
-            <h1 class="text-6xl font-bold mb-4">Daftar Blog Ku</h1>
+            <h1 class="text-6xl font-bold mb-4">Daftar Blog Baru</h1>
             <div class="flex space-x-3 items-center">
                 <form method="GET" class="w-lg">
                     <label for="default-search"
