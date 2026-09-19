@@ -56,4 +56,3 @@ Route::delete('/blogs/{id}/delete', [BlogController::class, 'destroy'])->name('b
 Route::get('/about-us', function() {
     return view('blogs/about-us');
 });
-
