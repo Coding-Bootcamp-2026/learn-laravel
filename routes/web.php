@@ -52,3 +52,8 @@ Route::get('/blogs/{id}/detail', [BlogController::class, 'show'])->name('blogs.s
 Route::get('/blogs/{id}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
 Route::put('/blogs/{id}/update', [BlogController::class, 'update'])->name('blogs.update');
 Route::delete('/blogs/{id}/delete', [BlogController::class, 'destroy'])->name('blogs.destroy');
+
+Route::get('/about-us', function() {
+    return view('blogs/about-us');
+});
+
