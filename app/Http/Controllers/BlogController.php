@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +12,13 @@ class BlogController extends Controller
     public function index(Request $request)
     {
         $title = $request->title;
-        $blogs = DB::table('blogs')->where('title', 'LIKE', '%' . $title . '%')->orderBy('created_at')->paginate(10);
+
+        // Query Builder
+        // $blogs = DB::table('blogs')->where('title', 'LIKE', '%' . $title . '%')->orderBy('created_at')->paginate(10);
+
+        // Eloquent ORM
+        $blogs = Blog::where('title', 'LIKE', '%' . $title . '%')->orderBy('created_at')->paginate(10);
+
         return view('blog', ['blogs' => $blogs, 'title' => $title]);
     }
 
@@ -29,7 +36,16 @@ class BlogController extends Controller
         ]);
 
         if ($validated) {
-            DB::table('blogs')->insert([
+            // Query Builder
+            // DB::table('blogs')->insert([
+            //     'title' => $request->title,
+            //     'deskripsi' => $request->deskripsi,
+            //     'status' => $request->status,
+            //     'user_id' => fake()->numberBetween(1, User::all()->count()),
+            // ]);
+
+            // Eloquent ORM
+            Blog::create([
                 'title' => $request->title,
                 'deskripsi' => $request->deskripsi,
                 'status' => $request->status,
@@ -44,9 +60,13 @@ class BlogController extends Controller
 
     public function show($id)
     {
-        $blog = DB::table('blogs')->where('id', $id)->first();
+        // Query Builder
+        // $blog = DB::table('blogs')->where('id', $id)->first();
 
-        if (!$blog) {
+        // Eloquent ORM
+        $blog = Blog::findOrFail($id);
+
+        if (! $blog) {
             abort(404, 'Data tidak ditemukan');
             // return view('blogs.error');
         }
@@ -56,9 +76,10 @@ class BlogController extends Controller
 
     public function edit($id)
     {
-        $blog = DB::table('blogs')->where('id', $id)->first();
+        // $blog = DB::table('blogs')->where('id', $id)->first();
+        $blog = Blog::findOrFail($id);
 
-        if (!$blog) {
+        if (! $blog) {
             abort(404);
         }
 
@@ -68,13 +89,22 @@ class BlogController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'title' => 'required|unique:blogs|max:255',
+            'title' => 'required|max:255',
             'deskripsi' => 'required',
             'status' => 'required',
         ]);
 
         if ($validated) {
-            DB::table('blogs')->where('id', $id)->update([
+            // DB::table('blogs')->where('id', $id)->update([
+            //     'title' => $request->title,
+            //     'deskripsi' => $request->deskripsi,
+            //     'status' => $request->status,
+            //     'user_id' => fake()->numberBetween(1, User::all()->count()),
+            //     'update_at' => now(),
+            // ]);
+
+            $blog = Blog::findOrFail($id);
+            $blog->update([
                 'title' => $request->title,
                 'deskripsi' => $request->deskripsi,
                 'status' => $request->status,
@@ -88,12 +118,25 @@ class BlogController extends Controller
 
     public function destroy($id)
     {
-        $blog = DB::table('blogs')->where('id', $id)->delete();
+        // $blog = DB::table('blogs')->where('id', $id)->delete();
+        $blog = Blog::destroy($id);
 
-        if (!$blog) {
+        if (! $blog) {
             return redirect()->route('blogs.index')->with('failed', 'Blog failed to Delete!');
         }
 
         return redirect()->route('blogs.index')->with('success', 'Blog Deleted Succesfully!');
+    }
+
+    public function homepage()
+    {
+        $blogs = Blog::with('user')->where('status', 'Active')->latest()->get();
+        return view('blogs.index', compact('blogs'));
+    }
+
+    public function detail($id)
+    {
+        $blog = Blog::with(['user', 'comments'])->findOrFail($id);
+        return view('blogs.show', compact('blog'));
     }
 }
