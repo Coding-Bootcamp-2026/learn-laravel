@@ -17,14 +17,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(1000000)->create();
+        User::factory(100)->create();
 
         // $this->call([
         //     UserSeeder::class,
         //     BlogSeeder::class
         // ]);
 
-        // Blog::factory(100)->create();
+        Blog::factory(100)->create();
 
         Phone::factory(50)->create();
     }

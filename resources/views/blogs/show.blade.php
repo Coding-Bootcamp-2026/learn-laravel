@@ -103,6 +103,19 @@
                 -->
                 {!! nl2br(e($blog->deskripsi ?? 'Konten artikel tidak tersedia.')) !!}
             </div>
+
+            <!-- Tags -->
+            @if(isset($blog->tags) && $blog->tags->count() > 0)
+                <div class="mt-10 pt-6 border-t border-slate-100 relative z-10">
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($blog->tags as $tag)
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-50 text-indigo-700 border border-indigo-100 shadow-sm">
+                                #{{ $tag->name }}
+                            </span>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </article>
 
         <!-- Action Buttons (Edit) -->

@@ -3,6 +3,7 @@
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PhoneController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -58,6 +59,8 @@ Route::prefix('admin')->group(function () {
 
     Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
     Route::delete('/comment/{id}', [CommentController::class, 'destroy'])->name('comment.destroy');
+
+    Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
 });
 
 Route::get('/blogs', [BlogController::class, 'homepage'])->name('blogs.homepage');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +25,8 @@ class BlogController extends Controller
 
     public function create()
     {
-        return view('blogs/create');
+        $tags = Tag::all();
+        return view('blogs.create', compact('tags'));
     }
 
     public function store(Request $request)
@@ -45,12 +47,14 @@ class BlogController extends Controller
             // ]);
 
             // Eloquent ORM
-            Blog::create([
+            $blog = Blog::create([
                 'title' => $request->title,
                 'deskripsi' => $request->deskripsi,
                 'status' => $request->status,
                 'user_id' => fake()->numberBetween(1, User::all()->count()),
             ]);
+
+            $blog->tags()->attach($request->tags);
 
             return redirect()->route('blogs.index')->with('success', 'New Blog Added Succesfully');
         } else {
@@ -77,13 +81,14 @@ class BlogController extends Controller
     public function edit($id)
     {
         // $blog = DB::table('blogs')->where('id', $id)->first();
-        $blog = Blog::findOrFail($id);
+        $blog = Blog::with('tags')->findOrFail($id);
+        $tags = Tag::all();
 
         if (! $blog) {
             abort(404);
         }
 
-        return view('blogs/edit', ['blog' => $blog]);
+        return view('blogs.edit', ['blog' => $blog, 'tags' => $tags]);
     }
 
     public function update(Request $request, $id)
@@ -111,6 +116,10 @@ class BlogController extends Controller
                 'user_id' => fake()->numberBetween(1, User::all()->count()),
                 'update_at' => now(),
             ]);
+
+            // $blog->tags()->detach($blog->tags);
+            // $blog->tags()->attach($request->tags);
+            $blog->tags()->sync($request->tags);
         }
 
         return redirect()->route('blogs.index')->with('success', 'Blog Edited Succesfully!');
@@ -136,7 +145,7 @@ class BlogController extends Controller
 
     public function detail($id)
     {
-        $blog = Blog::with(['user', 'comments'])->findOrFail($id);
+        $blog = Blog::with(['user', 'comments', 'tags'])->findOrFail($id);
         return view('blogs.show', compact('blog'));
     }
 }
