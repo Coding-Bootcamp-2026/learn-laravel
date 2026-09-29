@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PhoneController;
@@ -48,7 +49,7 @@ Route::get('/', function () {
 //     return view('greeting');
 // });
 
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
     Route::get('/blogs/create', [BlogController::class, 'create'])->name('blogs.create');
     Route::post('/blogs/store', [BlogController::class, 'store'])->name('blogs.store');
@@ -67,6 +68,10 @@ Route::get('/blogs', [BlogController::class, 'homepage'])->name('blogs.homepage'
 Route::get('/blogs/{id}', [BlogController::class, 'detail'])->name('blogs.detail');
 
 Route::post('/comment/{blogId}', [CommentController::class, 'store'])->name('comments.store');
+
+Route::get('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/login', [AuthController::class, 'authenticate'])->name('authenticate');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
 Route::get('/phones', [PhoneController::class, 'index'])->name('phones.index');
