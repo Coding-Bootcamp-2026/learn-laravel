@@ -58,10 +58,17 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::put('/blogs/{id}/update', [BlogController::class, 'update'])->name('blogs.update');
     Route::delete('/blogs/{id}/delete', [BlogController::class, 'destroy'])->name('blogs.destroy');
 
-    Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
-    Route::delete('/comment/{id}', [CommentController::class, 'destroy'])->name('comment.destroy');
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
+    Route::middleware('admin')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/phones', [PhoneController::class, 'index'])->name('phones.index');
+
+        Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
+        Route::delete('/comment/{id}', [CommentController::class, 'destroy'])->name('comment.destroy');
+
+        Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
+    });
 });
 
 Route::get('/blogs', [BlogController::class, 'homepage'])->name('blogs.homepage');
@@ -71,7 +78,3 @@ Route::post('/comment/{blogId}', [CommentController::class, 'store'])->name('com
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'authenticate'])->name('authenticate');
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-
-Route::get('/users', [UserController::class, 'index'])->name('users.index');
-Route::get('/phones', [PhoneController::class, 'index'])->name('phones.index');

@@ -6,7 +6,9 @@ use App\Models\Blog;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class BlogController extends Controller
 {
@@ -18,7 +20,10 @@ class BlogController extends Controller
         // $blogs = DB::table('blogs')->where('title', 'LIKE', '%' . $title . '%')->orderBy('created_at')->paginate(10);
 
         // Eloquent ORM
-        $blogs = Blog::where('title', 'LIKE', '%' . $title . '%')->orderBy('created_at')->paginate(10);
+        $user = Auth::user();
+        $blogs = Blog::when($user->role !== 'admin', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->where('title', 'LIKE', '%' . $title . '%')->orderBy('created_at')->paginate(10);
 
         return view('blog', ['blogs' => $blogs, 'title' => $title]);
     }
@@ -47,11 +52,12 @@ class BlogController extends Controller
             // ]);
 
             // Eloquent ORM
+            $userId = Auth::id();
             $blog = Blog::create([
                 'title' => $request->title,
                 'deskripsi' => $request->deskripsi,
                 'status' => $request->status,
-                'user_id' => fake()->numberBetween(1, User::all()->count()),
+                'user_id' => $userId,
             ]);
 
             $blog->tags()->attach($request->tags);
@@ -84,8 +90,8 @@ class BlogController extends Controller
         $blog = Blog::with('tags')->findOrFail($id);
         $tags = Tag::all();
 
-        if (! $blog) {
-            abort(404);
+        if (!Gate::allows('update-post', $blog)) {
+            return redirect()->route('blogs.index')->with('failed', 'Tidak bisa edit blog punya orang lain');
         }
 
         return view('blogs.edit', ['blog' => $blog, 'tags' => $tags]);
@@ -108,12 +114,13 @@ class BlogController extends Controller
             //     'update_at' => now(),
             // ]);
 
+            $userId = Auth::id();
             $blog = Blog::findOrFail($id);
             $blog->update([
                 'title' => $request->title,
                 'deskripsi' => $request->deskripsi,
                 'status' => $request->status,
-                'user_id' => fake()->numberBetween(1, User::all()->count()),
+                'user_id' => $userId,
                 'update_at' => now(),
             ]);
 
