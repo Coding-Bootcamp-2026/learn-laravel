@@ -19,10 +19,10 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(100)->create();
 
-        // $this->call([
-        //     UserSeeder::class,
-        //     BlogSeeder::class
-        // ]);
+        $this->call([
+            UserSeeder::class,
+            // BlogSeeder::class
+        ]);
 
         Blog::factory(100)->create();
 

@@ -68,6 +68,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::delete('/comment/{id}', [CommentController::class, 'destroy'])->name('comment.destroy');
 
         Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
+
+        Route::get('/blogs/trash', [BlogController::class, 'trash'])->name('blogs.trash');
+        Route::get('/blogs/{id}/restore', [BlogController::class, 'restore'])->name('blogs.restore');
     });
 });
 
