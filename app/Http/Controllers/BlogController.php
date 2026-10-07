@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
@@ -31,6 +32,7 @@ class BlogController extends Controller
     public function create()
     {
         $tags = Tag::all();
+
         return view('blogs.create', compact('tags'));
     }
 
@@ -40,16 +42,14 @@ class BlogController extends Controller
             'title' => ['required', 'unique:blogs', 'max:255'],
             'deskripsi' => 'required',
             'status' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if ($validated) {
-            // Query Builder
-            // DB::table('blogs')->insert([
-            //     'title' => $request->title,
-            //     'deskripsi' => $request->deskripsi,
-            //     'status' => $request->status,
-            //     'user_id' => fake()->numberBetween(1, User::all()->count()),
-            // ]);
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('blogs', 'public');
+            }
 
             // Eloquent ORM
             $userId = Auth::id();
@@ -57,6 +57,7 @@ class BlogController extends Controller
                 'title' => $request->title,
                 'deskripsi' => $request->deskripsi,
                 'status' => $request->status,
+                'image' => $imagePath,
                 'user_id' => $userId,
             ]);
 
@@ -90,7 +91,7 @@ class BlogController extends Controller
         $blog = Blog::with('tags')->findOrFail($id);
         $tags = Tag::all();
 
-        if (!Gate::allows('update-post', $blog)) {
+        if (! Gate::allows('update-post', $blog)) {
             return redirect()->route('blogs.index')->with('failed', 'Tidak bisa edit blog punya orang lain');
         }
 
@@ -103,23 +104,28 @@ class BlogController extends Controller
             'title' => 'required|max:255',
             'deskripsi' => 'required',
             'status' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if ($validated) {
-            // DB::table('blogs')->where('id', $id)->update([
-            //     'title' => $request->title,
-            //     'deskripsi' => $request->deskripsi,
-            //     'status' => $request->status,
-            //     'user_id' => fake()->numberBetween(1, User::all()->count()),
-            //     'update_at' => now(),
-            // ]);
-
             $userId = Auth::id();
             $blog = Blog::findOrFail($id);
+
+            Gate::authorize('update', $blog);
+
+            $imagePath = $blog->image;
+            if ($request->hasFile('image')) {
+                if ($blog->image) {
+                    Storage::disk('public')->delete($blog->image);
+                }
+                $imagePath = $request->file('image')->store('blogs', 'public');
+            }
+
             $blog->update([
                 'title' => $request->title,
                 'deskripsi' => $request->deskripsi,
                 'status' => $request->status,
+                'image' => $imagePath,
                 'user_id' => $userId,
                 'update_at' => now(),
             ]);
@@ -132,10 +138,23 @@ class BlogController extends Controller
         return redirect()->route('blogs.index')->with('success', 'Blog Edited Succesfully!');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         // $blog = DB::table('blogs')->where('id', $id)->delete();
-        $blog = Blog::destroy($id);
+        $blog = Blog::findOrFail($id);
+
+        Gate::authorize('delete', $blog);
+        // if ($request->user()->cannot('delete', $blog)) {
+        //     abort(403);
+        // }
+
+        $blog->tags()->detach();
+
+        if ($blog->image) {
+            Storage::disk('public')->delete($blog->image);
+        }
+
+        $blog->delete();
 
         if (! $blog) {
             return redirect()->route('blogs.index')->with('failed', 'Blog failed to Delete!');
@@ -147,12 +166,14 @@ class BlogController extends Controller
     public function homepage()
     {
         $blogs = Blog::with('user')->where('status', 'Active')->latest()->get();
+
         return view('blogs.index', compact('blogs'));
     }
 
     public function detail($id)
     {
         $blog = Blog::with(['user', 'comments', 'tags'])->findOrFail($id);
+
         return view('blogs.show', compact('blog'));
     }
 }

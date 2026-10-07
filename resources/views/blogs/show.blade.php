@@ -97,6 +97,11 @@
 
             <!-- Isi / Konten Artikel -->
             <div class="article-content text-lg text-slate-700 leading-[1.8] space-y-6 relative z-10">
+                @if($blog->image)
+                    <div class="mb-8 rounded-xl overflow-hidden shadow-sm">
+                        <img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}" class="w-full h-auto object-cover max-h-[500px]">
+                    </div>
+                @endif
                 <!--
                   Menggunakan nl2br(e()) karena berasumsi teks berasal dari textarea standar (mencegah XSS namun mempertahankan baris baru).
                   Jika Anda menggunakan Rich Text Editor (seperti CKEditor/TinyMCE), ganti baris di bawah dengan: {!! $blog->deskripsi !!}

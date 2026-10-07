@@ -11,7 +11,8 @@ class Tag extends Model
 {
     use HasFactory;
 
-    public function blogs() {
+    public function blogs()
+    {
         return $this->belongsToMany(Blog::class, 'blog_tag', 'tag_id', 'blog_id');
     }
 }

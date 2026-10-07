@@ -10,6 +10,7 @@ class CommentController extends Controller
     public function index()
     {
         $comments = Comment::with('blog')->get();
+
         return view('blogs.comments', compact('comments'));
     }
 
@@ -33,7 +34,7 @@ class CommentController extends Controller
     {
         $comment = Comment::findOrFail($id)->delete();
 
-        if(!$comment) {
+        if (! $comment) {
             return redirect()->route('comments.index')->with('failed', 'Comment Failed to Delete!');
         }
 

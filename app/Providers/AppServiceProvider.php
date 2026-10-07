@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('update-post', function(User $user, Blog $blog) {
+        Gate::define('update-post', function (User $user, Blog $blog) {
             return $user->id === $blog->user_id;
         });
     }

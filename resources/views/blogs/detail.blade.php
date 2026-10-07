@@ -36,6 +36,12 @@
             </div>
 
             <hr class="my-6 border-gray-200">
+            
+            @if($blog->image)
+                <div class="mb-6">
+                    <img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}" class="max-w-full h-auto rounded-lg shadow-md max-h-[400px] object-cover">
+                </div>
+            @endif
 
             <div class="prose max-w-none text-gray-700">
                 <p class="whitespace-pre-line text-lg">

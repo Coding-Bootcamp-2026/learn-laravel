@@ -26,7 +26,7 @@
                     @endforeach
                 </ul>
             @endif --}}
-            <form action="{{ route('blogs.store') }}" method="POST">
+            <form action="{{ route('blogs.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-5">
                     <label for="title" class="block mb-2 text-sm font-medium text-gray-900">Title</label>
@@ -34,6 +34,15 @@
                         class="@error('title') border-red-300 @enderror bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                         placeholder="Enter blog title">
                     @error('title')
+                        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <div class="mb-5">
+                    <label for="image" class="block mb-2 text-sm font-medium text-gray-900">Upload Image</label>
+                    <input type="file" id="image" name="image" 
+                        class="@error('image') border-red-300 @enderror block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+                    @error('image')
                         <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50">{{ $message }}</div>
                     @enderror
                 </div>
