@@ -176,4 +176,16 @@ class BlogController extends Controller
 
         return view('blogs.show', compact('blog'));
     }
+
+    public function trash()
+    {
+        $blogs = Blog::onlyTrashed()->get();
+        return view('blogs.restore', compact('blogs'));
+    }
+
+    public function restore($id)
+    {
+        $blog = Blog::onlyTrashed()->findOrFail($id)->restore();
+        return redirect()->route('blogs.index')->with('success', 'Data Blog Restore Succesfully!');
+    }
 }

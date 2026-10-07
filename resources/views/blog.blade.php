@@ -45,6 +45,9 @@
                 <a href="{{ route('tags.index') }}" type="button"
                     class="text-white bg-gradient-to-r rounded-lg from-green-500 via-green-600 to-green-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-base text-sm px-4 py-2.5 text-center leading-5">Manage
                     Tags</a>
+                <a href="{{ route('blogs.trash') }}" type="button"
+                    class="text-white bg-gradient-to-r rounded-lg from-yellow-500 via-yellow-600 to-yellow-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:focus:ring-yellow-800 shadow-lg shadow-yellow-500/50 dark:shadow-lg dark:shadow-yellow-800/80 font-medium rounded-base text-sm px-4 py-2.5 text-center leading-5">Manage
+                    Restore</a>
                 <a href="{{ route('logout') }}" type="button"
                     class="text-white bg-gradient-to-r rounded-lg from-gray-500 via-gray-600 to-gray-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-800 shadow-lg shadow-gray-500/50 dark:shadow-lg dark:shadow-gray-800/80 font-medium rounded-base text-sm px-4 py-2.5 text-center leading-5">
                     Logout</a>
