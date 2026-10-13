@@ -22,7 +22,7 @@ class PostController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        return Post::all();
+        return Post::latest()->get();
     }
 
     /**
@@ -49,7 +49,11 @@ class PostController extends Controller implements HasMiddleware
      */
     public function show(Post $post)
     {
-        //
+        return response()->json([
+            'status' => 'OK',
+            'message' => 'Detail Post: ' . $post->title,
+            'data' => $post,
+        ]);
     }
 
     /**

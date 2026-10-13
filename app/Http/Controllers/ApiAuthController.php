@@ -26,7 +26,7 @@ class ApiAuthController extends Controller
             'status' => 'OK',
             'message' => 'Register User Successfully!',
             'user' => $user,
-            'token' => $token,
+            'token' => $token->plainTextToken,
         ]);
     }
 
@@ -42,11 +42,12 @@ class ApiAuthController extends Controller
 
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return [
+            return response()->json([
+                'message' => 'The provided credentials are incorrect.',
                 'errors' => [
-                    'email' => ['The provided credentials are incorrect.']
-                ]
-            ];
+                    'email' => ['The provided credentials are incorrect.'],
+                ],
+            ], 401);
         }
 
 
